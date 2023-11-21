@@ -1,7 +1,0 @@
-C:\Users\Andrei Rares\source\repos\proiect_InteligentaArtificiala\proiect_InteligentaArtificiala\bin\Debug\proiect_InteligentaArtificiala.exe.config
-C:\Users\Andrei Rares\source\repos\proiect_InteligentaArtificiala\proiect_InteligentaArtificiala\bin\Debug\proiect_InteligentaArtificiala.exe
-C:\Users\Andrei Rares\source\repos\proiect_InteligentaArtificiala\proiect_InteligentaArtificiala\bin\Debug\proiect_InteligentaArtificiala.pdb
-C:\Users\Andrei Rares\source\repos\proiect_InteligentaArtificiala\proiect_InteligentaArtificiala\obj\Debug\proiect_InteligentaArtificiala.csproj.AssemblyReference.cache
-C:\Users\Andrei Rares\source\repos\proiect_InteligentaArtificiala\proiect_InteligentaArtificiala\obj\Debug\proiect_InteligentaArtificiala.csproj.CoreCompileInputs.cache
-C:\Users\Andrei Rares\source\repos\proiect_InteligentaArtificiala\proiect_InteligentaArtificiala\obj\Debug\proiect_InteligentaArtificiala.exe
-C:\Users\Andrei Rares\source\repos\proiect_InteligentaArtificiala\proiect_InteligentaArtificiala\obj\Debug\proiect_InteligentaArtificiala.pdb
