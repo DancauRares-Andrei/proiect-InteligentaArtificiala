@@ -14,7 +14,7 @@ namespace proiect_InteligentaArtificiala
         public Clause()
         {
             ps = new List<Tuple<Predicate, bool>>();
-            q = null;
+            q = new Tuple<Predicate, bool>(new Predicate(), false);
         }
 
         public void Addp(Predicate predicate, bool isNegated = false)
@@ -40,7 +40,7 @@ namespace proiect_InteligentaArtificiala
                 return p.Item2 ? $"AND NOT {p.Item1.stringify()}" : $"AND {p.Item1.stringify()}";
             });
             string ret = string.Join(" ", predicateStrings);
-            if (q != null)
+            if (q != null && q.Item1.Arguments.Count>0)
                 if (q.Item2)
                     ret += " => NOT " + q.Item1.stringify();
                 else

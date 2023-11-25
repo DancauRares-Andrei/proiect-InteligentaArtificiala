@@ -17,7 +17,6 @@ namespace proiect_InteligentaArtificiala
             z = new Variable("Z");
             Nono = new Variable("Nono");
             America = new Variable("America");
-            M1 = new Variable("M1");
             West = new Variable("West");
             var fb =new FactBase();
             Clause c1 = new Clause();
@@ -28,10 +27,10 @@ namespace proiect_InteligentaArtificiala
             c1.Setq(new Predicate("Criminal", new List<object> { x }), false);
             Console.WriteLine(c1.stringify());
             Clause c2 = new Clause();
-            c2.Addp(new Predicate("Owns", new List<object> { "Nono", M1 }), false);
+            c2.Addp(new Predicate("Owns", new List<object> { "Nono", "M1" }), false);
             Console.WriteLine(c2.stringify());
             Clause c3 = new Clause();
-            c3.Addp(new Predicate("Missile", new List<object> { M1 }), false);
+            c3.Addp(new Predicate("Missile", new List<object> { "M1" }), false);
             Console.WriteLine(c3.stringify());
             Clause c4 = new Clause();
             c4.Addp(new Predicate("Missile", new List<object> { x }), false);

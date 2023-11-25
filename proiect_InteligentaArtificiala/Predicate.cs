@@ -10,7 +10,11 @@ namespace proiect_InteligentaArtificiala
     {
         public string Name { get; set; }
         public List<object> Arguments { get; set; }
-
+        public Predicate()
+        {
+            Name = "";
+            Arguments = new List<object>();
+        }
         public Predicate(string name, List<object> arguments)
         {
             Name = name;
@@ -18,6 +22,8 @@ namespace proiect_InteligentaArtificiala
         }
         public string stringify()
         {
+            if (this.Arguments.Count == 0)
+                return "";
             if (this.Arguments.Count == 1)
                 return this.Name + "(" + this.Arguments[0].ToString() + ")";
             string a=this.Name+"("+this.Arguments[0].ToString();
