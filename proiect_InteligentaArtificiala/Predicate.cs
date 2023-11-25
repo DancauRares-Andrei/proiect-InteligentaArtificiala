@@ -28,5 +28,31 @@ namespace proiect_InteligentaArtificiala
             a += ")";
             return a;
         }
+        public override bool Equals(object obj)
+        {
+            if (obj == null || GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            Predicate other = (Predicate)obj;
+
+            return Name == other.Name &&
+                   Arguments.SequenceEqual(other.Arguments);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hash = 17;
+                hash = hash * 23 + Name.GetHashCode();
+                foreach (var arg in Arguments)
+                {
+                    hash = hash * 23 + (arg?.GetHashCode() ?? 0);
+                }
+                return hash;
+            }
+        }
     }
 }

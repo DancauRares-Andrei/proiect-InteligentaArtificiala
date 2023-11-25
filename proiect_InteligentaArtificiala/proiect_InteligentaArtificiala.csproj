@@ -44,11 +44,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Clause.cs" />
-    <Compile Include="FirstOrderLogic.cs" />
+    <Compile Include="FactBase.cs" />
+    <Compile Include="InferenceEngine.cs" />
     <Compile Include="Predicate.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Substitution.cs" />
     <Compile Include="Variable.cs" />
   </ItemGroup>
   <ItemGroup>

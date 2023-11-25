@@ -14,5 +14,10 @@ namespace proiect_InteligentaArtificiala
         {
             Name = name;
         }
+        
+        override public string ToString()
+        {
+            return Name;
+        }
     }
 }
