@@ -8,16 +8,21 @@ namespace proiect_InteligentaArtificiala
 {
     public class FactBase
     {
-        public List<Clause> Clauses { get; set; }
-
+        public List<Clause> Rules { get; set; }
+        public List<Predicate> Facts { get; set; }
         public FactBase()
         {
-            Clauses = new List<Clause>();
+            Rules = new List<Clause>();
+            Facts = new List<Predicate>();
         }
 
-        public void AddClause(Clause clause)
+        public void AddRule(Clause clause)
         {
-            Clauses.Add(clause);
+            Rules.Add(clause);
+        }
+        public void AddFact(Predicate predicate)
+        {
+            Facts.Add(predicate);
         }
     }
 }

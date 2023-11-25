@@ -10,61 +10,53 @@ namespace proiect_InteligentaArtificiala
     {
         public Dictionary<string, string> FOL_FC_ASK(FactBase KB, Predicate alpha)
         {
-            var newSentences = new List<Clause>();
-            KB = StandardizeApartFactBase(KB);
+            var newPredicates = new List<Predicate>();
             var substitutionsList = GenerateSubstitutionsFromFacts(StandardizeApartFactBase(KB));
-            /*foreach (var s in substitutionsList)
+            foreach (var s in substitutionsList)
             {
                 foreach (string key in s.Keys)
                 {
-                    s.TryGetValue(key,out string value);
+                    s.TryGetValue(key, out string value);
                     Console.WriteLine($"{key}=>{value}");
                 }
-                    
-            }*/
-            do
-            {
-                newSentences.Clear();
 
-                foreach (Clause r in KB.Clauses)
+            }
+            do {
+                newPredicates.Clear();
+                foreach (Clause r in KB.Rules)
                 {
-                    Clause newClause = StandardizeApart(r);
-                    Console.WriteLine(newClause.stringify());
-                   /* foreach(var theta in substitutionsList)
+                    Clause standard = StandardizeApart(r);
+                    List<Predicate> p1pn = standard.ps;
+                    foreach (var theta in substitutionsList)
                     {
-                        if (true)//Egalitate intre substitutii
+                        if (true)//egalitate intre substitutii
                         {
-                            Predicate q_prim = SubstPredicate(theta, r.q.Item1);
-                            Clause qp = new Clause();
-                            qp.Addp(q_prim);
-                            //qp.Setq(q_prim);
-                            if(!IsRenaming(qp, newSentences) && !IsRenaming(qp, KB.Clauses))
+                            Predicate q_prime = SubstPredicate(theta, standard.q);
+                            if (!IsRenaming(q_prime, newPredicates) && !IsRenaming(q_prime, KB.Facts))
                             {
-                                Console.WriteLine(qp.stringify());
-                                newSentences.Add(qp);
-                            }
-                            else
-                            {
-                                //Console.WriteLine(q_prim.stringify());
+                                Console.WriteLine(q_prime.stringify());
+                                newPredicates.Add(q_prime);
+                                var phi = Unify(q_prime, alpha,new Dictionary<string, string>());
+                                if (phi != null)
+                                    return phi;
                             }
                         }
-                    }*/
-
+                    }
                 }
-
-                KB.Clauses.AddRange(newSentences);
-
-            } while (newSentences.Count > 0);
-
+                KB.Facts.AddRange(newPredicates);
+            } while (newPredicates.Count > 0);
             return null;
         }
-        //Standardize Apart: Pentru fiecare clauza da nume diferite de variabile
         public FactBase StandardizeApartFactBase(FactBase fb)
         {
             FactBase factBase = new FactBase();
-            foreach(Clause c in fb.Clauses)
+            foreach (Clause c in fb.Rules)
             {
-                factBase.AddClause(StandardizeApart(c));
+                factBase.AddRule(StandardizeApart(c));
+            }
+            foreach (Predicate p in fb.Facts)
+            {
+                factBase.AddFact(StandardizeApartPredicate(p));
             }
             return factBase;
         }
@@ -72,18 +64,27 @@ namespace proiect_InteligentaArtificiala
         {
             var renamedClause = new Clause();
             // Prelucrează fiecare predicat din clauză, schimbând numele variabilelor
-            foreach (var predicateTuple in r.ps)
+            foreach (var predicate in r.ps)
             {
-                var standardizedPredicate = StandardizeApartPredicate(predicateTuple.Item1);
-                renamedClause.Addp(standardizedPredicate, predicateTuple.Item2);
+                var standardizedPredicate = StandardizeApartPredicate(predicate);
+                renamedClause.Addp(standardizedPredicate);
             }
 
             if (r.q != null)
             {
-                var standardizedQ = StandardizeApartPredicate(r.q.Item1);
-                renamedClause.Setq(standardizedQ, r.q.Item2);
+                var standardizedQ = StandardizeApartPredicate(r.q);
+                renamedClause.Setq(standardizedQ);
             }
             return renamedClause;
+        }
+        public bool IsRenaming(Predicate predicate, List<Predicate> predicates)
+        {
+            foreach(Predicate predicate1 in predicates)
+            {
+                if (predicate1.Name == predicate.Name)
+                    return true;
+            }
+            return false;
         }
         private Predicate StandardizeApartPredicate(Predicate predicate)
         {
@@ -107,45 +108,14 @@ namespace proiect_InteligentaArtificiala
 
             return new Predicate(predicate.Name, standardizedArguments);
         }
-        public bool IsRenaming(Clause q, List<Clause> a)
+        public List<Predicate> Subst(Dictionary<string, string> theta, List<Predicate> predicates)
         {
-            foreach (var clause in a)
-            {
-                if (IsRenamingClause(q, clause))
-                {
-                    return true;
-                }
-            }
+            var substitutedClause = new List<Predicate>();
 
-            return false;
-        }
-        public bool IsRenamingClause(Clause q, Clause r)
-        {
-            if (q.q.Item1.Name != r.q.Item1.Name || q.q.Item2 != r.q.Item2)
-                return false;
-            if (q.ps.Count != r.ps.Count)
-                return false;
-            for (int i = 0; i < q.ps.Count; i++)
+            foreach (var predicateTuple in predicates)
             {
-                if (q.ps[i].Item1.Name != r.ps[i].Item1.Name || q.ps[i].Item2 != r.ps[i].Item2)
-                    return false;
-            }
-            return true;
-        }
-        public Clause Subst(Dictionary<string, string> theta, Clause clause)
-        {
-            var substitutedClause = new Clause();
-
-            foreach (var predicateTuple in clause.ps)
-            {
-                var substitutedPredicate = SubstPredicate(theta, predicateTuple.Item1);
-                substitutedClause.Addp(substitutedPredicate, predicateTuple.Item2);
-            }
-
-            if (clause.q != null)
-            {
-                var substitutedQ = SubstPredicate(theta, clause.q.Item1);
-                substitutedClause.Setq(substitutedQ, clause.q.Item2);
+                var substitutedPredicate = SubstPredicate(theta, predicateTuple);
+                substitutedClause.Add(substitutedPredicate);
             }
 
             return substitutedClause;
@@ -169,11 +139,11 @@ namespace proiect_InteligentaArtificiala
             List<Dictionary<string, string>> substitutii_posibile = new List<Dictionary<string, string>>();
             List<string> neVar = new List<string>();
             List<string> varNames = new List<string>();
-            foreach (Clause c in factBase.Clauses)
+            foreach (Clause c in factBase.Rules)
             {
-                foreach (var tuple in c.ps)
+                foreach (var predicate in c.ps)
                 {
-                    foreach (var a in tuple.Item1.Arguments)
+                    foreach (var a in predicate.Arguments)
                         if (!(a is Variable))
                         {
                             if (!neVar.Contains(a.ToString()))
@@ -185,20 +155,106 @@ namespace proiect_InteligentaArtificiala
                                 varNames.Add((a as Variable).Name);
                         }
                 }
+                foreach (var a in c.q.Arguments)
+                {
+                    if (!(a is Variable))
+                    {
+                        if (!neVar.Contains(a.ToString()))
+                            neVar.Add(a.ToString());
+                    }
+                    else
+                    {
+                        if (!varNames.Contains((a as Variable).Name))
+                            varNames.Add((a as Variable).Name);
+                    }
+                }
             }
-            foreach(string varname in varNames)
+            foreach (Predicate p in factBase.Facts)
+            {
+                foreach (var a in p.Arguments)
+                {
+                    if (!(a is Variable))
+                    {
+                        if (!neVar.Contains(a.ToString()))
+                            neVar.Add(a.ToString());
+                    }
+                    else
+                    {
+                        if (!varNames.Contains((a as Variable).Name))
+                            varNames.Add((a as Variable).Name);
+                    }
+                }
+            }
+            foreach (string varname in varNames)
             {
                 foreach (string nevar in neVar)
                 {
-                    //
                     Dictionary<string, string> keyValues = new Dictionary<string, string>();
                     keyValues.Add(varname, nevar);
                     substitutii_posibile.Add(keyValues);
                 }
-                    
+
             }
             return substitutii_posibile;
         }
+        public Dictionary<string,string> Unify(object x,object y,Dictionary<string,string> theta)
+        {
+            if (theta == null)
+                return null;
+            else if (x.Equals(y))
+                return theta;
+            else if (IsVariable(x))
+                return UnifyVar(x as Variable, y, theta);
+            else if (IsVariable(y))
+                return UnifyVar(y as Variable, x, theta);
+            else if (IsCompound(x) && IsCompound(y))
+                return Unify((x as Predicate).Arguments, (y as Predicate).Arguments, Unify((x as Predicate).Name, (y as Predicate).Name, theta));
+            else if (IsList(x) && IsList(y))
+                return Unify((x as List<object>).Skip(1), (y as List<object>).Skip(1), Unify((x as List<object>).First(), (y as List<object>).First(), theta));
+            else return null;
+        }
+        public Dictionary<string, string> UnifyVar(Variable v,object x,Dictionary<string,string> theta)
+        {
+            if(theta.TryGetValue(v.Name, out var val))
+            {
+                return Unify(val, x, theta);
+            }
+            if(theta.TryGetValue(x.ToString(),out var existingVal))
+            {
+                return Unify(v, val, theta);
+            }
+            else if (OccurCheck(v, x))
+            {
+                return null;
+            }
+            else
+            {
+                theta.Add(v.Name, x.ToString());
+                return theta;
+            }
+        }
+        private bool OccurCheck(Variable var,object x)
+        {
+            if (x is Predicate)
+            {
+                return (x as Predicate).Arguments.Contains(var);
+            }
+            else
+            {
+                return false;
+            }
+        }
+        private bool IsVariable(object x)
+        {
+            return x is Variable;
+        }
+        private bool IsCompound(object x)
+        {
+            return x is Predicate;
+        }
+        private bool IsList(object x)
+        {
+            return x is List<object>;
+        }
     }
-       
- }
+}
