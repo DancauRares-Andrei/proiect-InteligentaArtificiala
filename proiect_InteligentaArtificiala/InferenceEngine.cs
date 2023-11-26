@@ -51,11 +51,9 @@ namespace proiect_InteligentaArtificiala
                     if (predicate.Name == predicate1.Name)
                     {
                         var theta = Unify(predicate, predicate1, new Dictionary<string, string>());
-                        if (theta == null)
-                            return new List<Dictionary<string, string>>();
-                        //Daca totul e ok pentru toate predicatele din standard.ps, atunci voi returna lista de substitutii la care adaug de aici
-                        else
+                        if (theta != null)
                             substitutionsList.Add(theta);
+                            
                     }                  
                 }
             }
