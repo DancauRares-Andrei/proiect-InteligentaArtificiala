@@ -15,8 +15,7 @@ namespace proiect_InteligentaArtificiala
                 newPredicates.Clear();
                 foreach (Clause r in KB.Rules)
                 {
-                    Clause standard = r;//StandardizeApart(r) nu este necesar pentru ca stabilesc de la inceput sa nu fie conflicte
-                    List<Predicate> p1pn = standard.ps;
+                    Clause standard = r;//StandardizeApart(r) nu este necesar 
                     var substitutionsList = IdentifySubstitutions(KB.Facts, standard);//Determinare substitutii posibile=egalitate intre substitutii
                     foreach (var theta in substitutionsList)
                     {
@@ -44,15 +43,17 @@ namespace proiect_InteligentaArtificiala
             var substitutionsList = new List<Dictionary<string, string>>();
             foreach(Predicate predicate in standard.ps)
             {
+                //Daca pentru un predicat din regula nu exista echivalent in fapte, atunci nu pot face substitutie
                 if (!facts.Exists(x => x.Name == predicate.Name))
                     return new List<Dictionary<string, string>>();
                 foreach (Predicate predicate1 in facts)
-                {
+                {//Daca am un predicat in baza de fapte si unificarea este nula, atunci nu pot face substitutia
                     if (predicate.Name == predicate1.Name)
                     {
                         var theta = Unify(predicate, predicate1, new Dictionary<string, string>());
                         if (theta == null)
                             return new List<Dictionary<string, string>>();
+                        //Daca totul e ok pentru toate predicatele din standard.ps, atunci voi returna lista de substitutii la care adaug de aici
                         else
                             substitutionsList.Add(theta);
                     }                  
@@ -62,6 +63,7 @@ namespace proiect_InteligentaArtificiala
         }
         public bool IsRenaming(Predicate predicate, List<Predicate> predicates)
         {
+            //O redenumire a unui predicat inseamna ca am intr-o lista de predicate un predicat cu acelasi nume, chiar daca are parametrii diferiti
             foreach (Predicate predicate1 in predicates)
             {
                 if (predicate1.Name == predicate.Name)
@@ -72,21 +74,23 @@ namespace proiect_InteligentaArtificiala
 
         private Predicate SubstPredicate(Dictionary<string, string> theta, Predicate predicate)
         {
+            //Aplic substitutia theta pe fiecare argument
             var substitutedArguments = predicate.Arguments.Select(arg => SubstArgument(theta, arg)).ToList();
             return new Predicate(predicate.Name, substitutedArguments);
         }
         private object SubstArgument(Dictionary<string, string> theta, object argument)
         {
+            //Daca argumentul meu este o variabila si am in theta o substitutie, intorc o noua variabila cu numele din substitutie
             if (argument is Variable var && theta.TryGetValue(var.Name, out var substitution))
             {
-                return new Variable(substitution);//substitution dar strica refacerea; cu var.Name se vede, dar nu face procesul bine
+                return new Variable(substitution);
             }
-
+            //Daca nu sunt in cazul de mai sus, fie am string ca argument fie nu exista substitutie in theta pentru variabila
             return argument;
         }
-
         public Dictionary<string,string> Unify(object x,object y,Dictionary<string,string> theta)
         {
+            //Algoritmul clasic de unificare
             if (theta == null)
                 return null;
             else if (x.Equals(y))
@@ -99,23 +103,21 @@ namespace proiect_InteligentaArtificiala
                 return Unify((x as Predicate).Arguments, (y as Predicate).Arguments, Unify((x as Predicate).Name, (y as Predicate).Name, theta));
             else if (IsList(x) && IsList(y))
             {
-                /*if ((x as List<object>).Count == 0 && (y as List<object>).Count == 0)
+                if ((x as List<object>).Count == 0 && (y as List<object>).Count == 0)
                     return theta;
-                else if ((x as List<object>).Count == 0 || (y as List<object>).Count == 0)
-                    return null;
-                object a = (x as List<object>).First();
-                object b = (y as List<object>).First();
-                (x as List<object>).RemoveAt(0);
-                (y as List<object>).RemoveAt(0);
-               if ((x as List<object>).Count == 0 && (y as List<object>).Count == 0)
-                    return null;                    
-                return Unify(x,y , Unify(a, b, theta));*/
-                return UnifyList(x as List<object>, y as List<object>, theta);
+                else if ((x as List<object>).Count>0 && (y as List<object>).Count > 0)
+                {
+                    var unifiedFirst = Unify((x as List<object>).First(), (y as List<object>).First(), theta);
+                    if (unifiedFirst != null)
+                        return Unify((x as List<object>).Skip(1).ToList(), (y as List<object>).Skip(1).ToList(), unifiedFirst);
+                }
+                return null;
             }
             else return null;
         }
         public Dictionary<string, string> UnifyVar(Variable v,object x,Dictionary<string,string> theta)
         {
+            //Algoritmul clasic de unificare intre o variabila si un obiect
             if (x == null)
                 return null;
             if(theta.TryGetValue(v.Name, out var val))
@@ -138,6 +140,7 @@ namespace proiect_InteligentaArtificiala
         }
         private bool OccurCheck(Variable var,object x)
         {
+            //Aceasta functie verifica daca predicatul X contine variabila var in argumente; Daca da, atunci nu se poate face unificarea
             if (x is Predicate)
             {
                 return (x as Predicate).Arguments.Contains(var);
@@ -159,26 +162,5 @@ namespace proiect_InteligentaArtificiala
         {
             return x is List<object>;
         }
-        private Dictionary<string, string> UnifyList(List<object> x, List<object> y, Dictionary<string, string> theta)
-        {
-            if (x.Count == 0 && y.Count == 0)
-            {
-                return theta; // Liste goale se unifică direct
-            }
-            else if (x.Count > 0 && y.Count > 0)
-            {
-                // Unifică primul element al fiecărei liste
-                var unifiedFirst = Unify(x.First(), y.First(), theta);
-
-                if (unifiedFirst != null)
-                {
-                    // Unifică restul listelor recursiv
-                    return UnifyList(x.Skip(1).ToList(), y.Skip(1).ToList(), unifiedFirst);
-                }
-            }
-
-            return null; // Returnează null dacă nu se poate realiza unificarea
-        }
-
     }
 }
