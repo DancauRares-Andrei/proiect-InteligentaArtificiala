@@ -52,8 +52,7 @@ namespace proiect_InteligentaArtificiala
                     {
                         var theta = Unify(predicate, predicate1, new Dictionary<string, string>());
                         if (theta != null)
-                            substitutionsList.Add(theta);
-                            
+                            substitutionsList.Add(theta);                           
                     }                  
                 }
             }
@@ -61,13 +60,21 @@ namespace proiect_InteligentaArtificiala
         }
         public bool IsRenaming(Predicate predicate, List<Predicate> predicates)
         {
-            //O redenumire a unui predicat inseamna ca am intr-o lista de predicate un predicat cu acelasi nume, chiar daca are parametrii diferiti
-            foreach (Predicate predicate1 in predicates)
+            //Parcurg lista de predicate si verific daca exista o egalitate cu unul din predicate
+            foreach (Predicate existingPredicate in predicates)
             {
-                if (predicate1.Name == predicate.Name)
+                if (ArePredicatesEqual(predicate, existingPredicate))
+                {
                     return true;
+                }
             }
             return false;
+        }
+
+        private bool ArePredicatesEqual(Predicate predicate1, Predicate predicate2)
+        {
+            // Verifică dacă numele și argumentele predicatelor sunt identice
+            return predicate1.Name == predicate2.Name && predicate1.Arguments.SequenceEqual(predicate2.Arguments);
         }
 
         private Predicate SubstPredicate(Dictionary<string, string> theta, Predicate predicate)

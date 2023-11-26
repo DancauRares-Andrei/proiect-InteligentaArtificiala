@@ -20,5 +20,11 @@ namespace proiect_InteligentaArtificiala
         {
             return Name;
         }
+        public override bool Equals(object obj)
+        {
+            if (obj is Variable)
+                return (obj as Variable).Name == this.Name;
+            return false;
+        }
     }
 }
