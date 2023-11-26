@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace proiect_InteligentaArtificiala
 {
+    //Clasa pentru variabila; Variabila este definita printr-un nume.
     public class Variable
     {
         public string Name { get; set; }

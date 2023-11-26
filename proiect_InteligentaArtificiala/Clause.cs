@@ -9,6 +9,8 @@ namespace proiect_InteligentaArtificiala
     public class Clause
     {
         //Clauza va fi formata din doua parti, ce se afla in dreapta si ce se afla in stanga implicatiei
+        //Clauza este definita in ordinul intai; Antecedentul este o conjunctie de literali pozitivi
+        //Consecventul este un singur literal pozitiv
         public List<Predicate> ps { get; set; }
         public Predicate q { get; set; }
         public Clause()

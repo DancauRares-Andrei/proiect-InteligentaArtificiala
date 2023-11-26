@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace proiect_InteligentaArtificiala
 {
+    //Clasa pentru predicate. Predicatul are un nume si o lista de argumente care poate fi compusa din variabile sau string-uri
     public class Predicate
     {
         public string Name { get; set; }
@@ -22,6 +23,7 @@ namespace proiect_InteligentaArtificiala
         }
         public string stringify()
         {
+            //Functia de transformare a unui predicat in string; Este folosita pentru a afisa la consola predicatul
             if (this.Arguments.Count == 0)
                 return "";
             if (this.Arguments.Count == 1)
@@ -33,32 +35,6 @@ namespace proiect_InteligentaArtificiala
             }
             a += ")";
             return a;
-        }
-        public override bool Equals(object obj)
-        {
-            if (obj == null || GetType() != obj.GetType())
-            {
-                return false;
-            }
-
-            Predicate other = (Predicate)obj;
-
-            return Name == other.Name &&
-                   Arguments.SequenceEqual(other.Arguments);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int hash = 17;
-                hash = hash * 23 + Name.GetHashCode();
-                foreach (var arg in Arguments)
-                {
-                    hash = hash * 23 + (arg?.GetHashCode() ?? 0);
-                }
-                return hash;
-            }
         }
     }
 }

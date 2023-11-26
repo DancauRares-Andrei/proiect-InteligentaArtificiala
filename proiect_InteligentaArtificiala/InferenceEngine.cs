@@ -8,7 +8,7 @@ namespace proiect_InteligentaArtificiala
 {
     public class InferenceEngine
     {
-        public Dictionary<string, string> FOL_FC_ASK(FactBase KB, Predicate alpha)
+        public Dictionary<string, string> FOL_FC_ASK(KnowledgeBase KB, Predicate alpha)
         {
             var newPredicates = new List<Predicate>();
             do {

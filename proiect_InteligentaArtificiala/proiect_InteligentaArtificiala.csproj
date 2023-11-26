@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Clause.cs" />
-    <Compile Include="FactBase.cs" />
+    <Compile Include="KnowledgeBase.cs" />
     <Compile Include="InferenceEngine.cs" />
     <Compile Include="Predicate.cs" />
     <Compile Include="Program.cs" />

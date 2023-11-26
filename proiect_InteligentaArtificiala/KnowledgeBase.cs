@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 
 namespace proiect_InteligentaArtificiala
 {
-    public class FactBase
+    //Clasa pentru baza de cunostinte, contine o lista de reguli si o lista de fapte
+    //Faptele sunt propozitii atomice, iar regulile sunt clauze definite de ordinul intai.
+    public class KnowledgeBase
     {
         public List<Clause> Rules { get; set; }
         public List<Predicate> Facts { get; set; }
-        public FactBase()
+        public KnowledgeBase()
         {
             Rules = new List<Clause>();
             Facts = new List<Predicate>();
@@ -23,6 +25,11 @@ namespace proiect_InteligentaArtificiala
         public void AddFact(Predicate predicate)
         {
             Facts.Add(predicate);
+        }
+        public void Clear()
+        {
+            Facts.Clear();
+            Rules.Clear();
         }
     }
 }
