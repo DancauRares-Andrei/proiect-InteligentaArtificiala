@@ -8,7 +8,6 @@ namespace proiect_InteligentaArtificiala
 {
     public class InferenceEngine
     {
-        private int globalVariableCounter = 1;
         public Dictionary<string, string> FOL_FC_ASK(FactBase KB, Predicate alpha)
         {
             var newPredicates = new List<Predicate>();
@@ -16,19 +15,9 @@ namespace proiect_InteligentaArtificiala
                 newPredicates.Clear();
                 foreach (Clause r in KB.Rules)
                 {
-                    Clause standard = StandardizeApart(r);//StandardizeApart(r)
+                    Clause standard = r;//StandardizeApart(r) nu este necesar pentru ca stabilesc de la inceput sa nu fie conflicte
                     List<Predicate> p1pn = standard.ps;
-                    var substitutionsList = IdentifySubstitutions(KB.Facts, standard);
-                   /* foreach (var s in substitutionsList)
-                    {
-                        foreach (string key in s.Keys)
-                        {
-                            s.TryGetValue(key, out string value);
-                            Console.WriteLine($"{key}=>{value}");
-                        }
-                   
-                    }*/
-                    //Determinare substitutii posibile=egalitate intre substitutii
+                    var substitutionsList = IdentifySubstitutions(KB.Facts, standard);//Determinare substitutii posibile=egalitate intre substitutii
                     foreach (var theta in substitutionsList)
                     {
                             Predicate q_prime = SubstPredicate(theta, standard.q);
@@ -36,11 +25,10 @@ namespace proiect_InteligentaArtificiala
                             {
                               //Afisare propozitii noi la fiecare pas
                                Console.WriteLine(q_prime.stringify());
-                                newPredicates.Add(q_prime);
+                            newPredicates.Add(q_prime);
                                 var phi = Unify(q_prime, alpha,new Dictionary<string, string>());
                             if (phi != null)
                             {
-                                Console.WriteLine(standard.stringify());
                                 return phi;
                             }
                             }
@@ -54,15 +42,22 @@ namespace proiect_InteligentaArtificiala
         private List<Dictionary<string, string>> IdentifySubstitutions(List<Predicate> facts, Clause standard)
         {
             var substitutionsList = new List<Dictionary<string, string>>();
-            var theta = new Dictionary<string, string>();
-            foreach (var fact in facts)
+            foreach(Predicate predicate in standard.ps)
             {
-                // Realizează unificare între fapt și antecedentul regulii standardizate
-                theta = Unify(fact, standard);
-                if (theta != null)
-                    substitutionsList.Add(theta);            
+                if (!facts.Exists(x => x.Name == predicate.Name))
+                    return new List<Dictionary<string, string>>();
+                foreach (Predicate predicate1 in facts)
+                {
+                    if (predicate.Name == predicate1.Name)
+                    {
+                        var theta = Unify(predicate, predicate1, new Dictionary<string, string>());
+                        if (theta == null)
+                            return new List<Dictionary<string, string>>();
+                        else
+                            substitutionsList.Add(theta);
+                    }                  
+                }
             }
-
             return substitutionsList;
         }
         public bool IsRenaming(Predicate predicate, List<Predicate> predicates)
@@ -74,70 +69,7 @@ namespace proiect_InteligentaArtificiala
             }
             return false;
         }
-        private Dictionary<string, string> Unify(Predicate fact, Clause standard)
-        {
-            // Implementează unificarea între fapt și antecedentul regulii standardizate
-            foreach(Predicate predicate in standard.ps)
-            {
-                Dictionary<string, string> val = Unify(fact, predicate, new Dictionary<string, string>());
-                if (val != null)
-                    return val;
-            }
-            return Unify(fact, standard.q, new Dictionary<string, string>());
-        }
 
-        /*  public List<Predicate> Subst(Dictionary<string, string> theta, List<Predicate> predicates)
-          {
-              var substitutedClause = new List<Predicate>();
-
-              foreach (var predicateTuple in predicates)
-              {
-                  var substitutedPredicate = SubstPredicate(theta, predicateTuple);
-                  substitutedClause.Add(substitutedPredicate);
-              }
-
-              return substitutedClause;
-          }*/
-        public Clause StandardizeApart(Clause r)
-        {
-            var renamedClause = new Clause();
-            var variableNameMapping = new Dictionary<string, string>(); // Dicționar pentru a ține evidența numelor variabilelor
-
-            // Prelucrează fiecare predicat din clauză, schimbând numele variabilelor
-            foreach (var predicate in r.ps)
-            {
-                var standardizedPredicate = StandardizeApartPredicate(predicate, variableNameMapping);
-                renamedClause.Addp(standardizedPredicate);
-            }
-
-            if (r.q != null)
-            {
-                var standardizedQ = StandardizeApartPredicate(r.q, variableNameMapping);
-                renamedClause.Setq(standardizedQ);
-            }
-
-            return renamedClause;
-        }
-
-        private Predicate StandardizeApartPredicate(Predicate predicate, Dictionary<string, string> variableNameMapping)
-        {
-            var standardizedArguments = predicate.Arguments.Select(arg =>
-            {
-                if (arg is Variable var)
-                {
-                    if (!variableNameMapping.TryGetValue(var.Name, out var standardizedName))
-                    {
-                        standardizedName = "X" + globalVariableCounter++;
-                        variableNameMapping[var.Name] = standardizedName;
-                    }
-                    return new Variable(standardizedName);
-                }
-
-                return arg;
-            }).ToList();
-
-            return new Predicate(predicate.Name, standardizedArguments);
-        }
         private Predicate SubstPredicate(Dictionary<string, string> theta, Predicate predicate)
         {
             var substitutedArguments = predicate.Arguments.Select(arg => SubstArgument(theta, arg)).ToList();
@@ -147,7 +79,7 @@ namespace proiect_InteligentaArtificiala
         {
             if (argument is Variable var && theta.TryGetValue(var.Name, out var substitution))
             {
-                return new Variable(var.Name);//substitution
+                return new Variable(substitution);//substitution dar strica refacerea; cu var.Name se vede, dar nu face procesul bine
             }
 
             return argument;
@@ -184,6 +116,8 @@ namespace proiect_InteligentaArtificiala
         }
         public Dictionary<string, string> UnifyVar(Variable v,object x,Dictionary<string,string> theta)
         {
+            if (x == null)
+                return null;
             if(theta.TryGetValue(v.Name, out var val))
             {
                 return Unify(val, x, theta);

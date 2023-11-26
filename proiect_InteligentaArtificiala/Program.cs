@@ -78,11 +78,6 @@ namespace proiect_InteligentaArtificiala
             if (substitution != null)
              {
                    Console.WriteLine("Propozitia este satisfiabila.");
-                   Console.WriteLine("Substitutie:");
-                   foreach (var entry in substitution)
-                   {
-                       Console.WriteLine($"{entry.Key} -> {entry.Value}");
-                   }
              }
             else
             {
