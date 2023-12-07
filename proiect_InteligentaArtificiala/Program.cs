@@ -22,7 +22,7 @@ namespace proiect_InteligentaArtificiala
             var fol = new InferenceEngine();
 
             //Cazul 1 de test
-            Console.WriteLine("Cazul 1 de test:\n");
+            Console.WriteLine("Cazul 1 de test: Criminalitatea lui West:\n");
             alpha = new Predicate("Criminal", new List<object> { "West" });
             kb.AddFact(new Predicate("Owns", new List<object> { "Nono", "M1" }));
             kb.AddFact(new Predicate("Missile", new List<object> { "M1" }));
@@ -68,16 +68,16 @@ namespace proiect_InteligentaArtificiala
             // Verificam rezultatul
             if (substitution != null)
             {
-                Console.WriteLine("Propozitia este satisfiabila.");
+                Console.WriteLine("Propozitia poate fi demonstrata.");
             }
             else
             {
-                Console.WriteLine("Propozitia nu este satisfiabila.");
+                Console.WriteLine("Propozitia nu poate fi demonstratata.");
             }
 
             kb.Clear();
             //Cazul 2 de test
-            Console.WriteLine("\n\nCazul 2 de test:\n");
+            Console.WriteLine("\n\nCazul 2 de test: Verificarea daca John este malefic:\n");
             alpha = new Predicate("Evil", new List<object> { "John" });
             kb.AddFact(new Predicate("King", new List<object> { "John" }));
             kb.AddFact(new Predicate("Greedy", new List<object> { "John" }));
@@ -103,11 +103,11 @@ namespace proiect_InteligentaArtificiala
             // Verificam rezultatul
             if (substitution != null)
             {
-                Console.WriteLine("Propozitia este satisfiabila.");
+                Console.WriteLine("Propozitia poate fi demonstrata.");
             }
             else
             {
-                Console.WriteLine("Propozitia nu este satisfiabila.");
+                Console.WriteLine("Propozitia nu poate fi demonstrata.");
             }
             //Cazul 1 Verificarea ca o functie este bijectiva
             /* Fie f:{3,4}->{6,8}, f(3)=6 f(4)=8. Mai jos este demonstratia ca f este bijectiva. 
@@ -177,11 +177,11 @@ namespace proiect_InteligentaArtificiala
             // Verificam rezultatul
             if (substitution != null)
             {
-                Console.WriteLine("Propozitia este satisfiabila.");
+                Console.WriteLine("Propozitia poate fi demonstrata.");
             }
             else
             {
-                Console.WriteLine("Propozitia nu este satisfiabila.");
+                Console.WriteLine("Propozitia nu poate fi demonstrata.");
             }
             //Cazul 2 Lema clestelui
             /*
@@ -237,11 +237,11 @@ namespace proiect_InteligentaArtificiala
             // Verificam rezultatul
             if (substitution != null)
             {
-                Console.WriteLine("Propozitia este satisfiabila.");
+                Console.WriteLine("Propozitia poate fi demonstrata.");
             }
             else
             {
-                Console.WriteLine("Propozitia nu este satisfiabila.");
+                Console.WriteLine("Propozitia nu poate fi demonstrata.");
             }
             Console.Read();
         }
